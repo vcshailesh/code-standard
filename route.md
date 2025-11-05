@@ -131,7 +131,21 @@ In `RouteServiceProvider`:
         });
     }
 }
-``` 
+```
+
+In ```routes/web/admin.php```:
+```
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UserController;
+
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+
+Route::resource('users', UserController::class);
+```
+
 ---
 
 ## ✨ 6. Follow Naming Conventions
