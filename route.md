@@ -50,7 +50,7 @@ Route::resource('posts', PostController::class)->only(['index', 'store', 'destro
 ---
 
 ## 🧱 5. Keep Route Files Organized
-Example structure:
+### Example 1:
 ```
 routes/
 ├── web.php
@@ -76,7 +76,62 @@ public function boot(): void
     });
 }
 ```
+### Example 2:
+```
+routes/
+├── web/
+│   ├── frontend.php
+│   ├── admin.php
+│   ├── user.php
+│   └── vendor.php
+│
+├── api/
+│   ├── v1.php
+│   ├── v2.php
+│   └── internal.php
+│
+├── system/
+│   ├── channels.php
+│   ├── console.php
+│   └── breadcrumbs.php
+```
 
+In `RouteServiceProvider`:
+```php
+    public function boot(): void
+    {
+        $this->routes(function () {
+            // Web routes
+            Route::middleware('web')
+                ->group(base_path('routes/web/frontend.php'));
+
+            Route::middleware(['web', 'auth', 'role:admin'])
+                ->prefix('admin')
+                ->group(base_path('routes/web/admin.php'));
+
+            Route::middleware(['web', 'auth'])
+                ->prefix('user')
+                ->group(base_path('routes/web/user.php'));
+
+            // API routes (versioned)
+            Route::prefix('api/v1')
+                ->middleware('api')
+                ->group(base_path('routes/api/v1.php'));
+
+            Route::prefix('api/v2')
+                ->middleware('api')
+                ->group(base_path('routes/api/v2.php'));
+
+            // System routes (not exposed publicly)
+            Route::middleware('console')
+                ->group(base_path('routes/system/console.php'));
+
+            Route::middleware('channels')
+                ->group(base_path('routes/system/channels.php'));
+        });
+    }
+}
+``` 
 ---
 
 ## ✨ 6. Follow Naming Conventions
